@@ -43,4 +43,4 @@ RUN tsc
 EXPOSE 3001
 
 # Start the application (in this case, the compiled JavaScript file)
-CMD ["node", "dist/index.ts"]
+CMD ["node", "dist/index.js"]
