@@ -34,6 +34,9 @@ COPY package*.json ./
 # Install dependencies
 RUN npm install
 
+# Delete the 'dist' folder before compilation
+RUN rm -rf ./dist
+
 # Copy TypeScript source code
 COPY . .
 

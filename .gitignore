@@ -1,9 +1,5 @@
 .env
 node_modules
-dist/middlewares/checkAdmin.js
-dist/middlewares/uploadFile.js
 .DS_Store
 .github/.DS_Store
-controllers/musicController.ts
-controllers/playlistController.ts
 dist/
