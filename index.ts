@@ -3,9 +3,9 @@ import { AppDataSource } from './database/db';
 import authRouter from './routes/authRouter'
 import userRouter from './routes/userRouter'
 import searchRouter from './routes/searchRouter'
-import movieRouter from './routes/MovieRouter'
-import libraryRouter from './routes/LibraryRouter'
-import libraryMovieRouter from './routes/LibraryMovieRouter'
+import movieRouter from './routes/movieRouter'
+import libraryRouter from './routes/libraryRouter'
+import libraryMovieRouter from './routes/libraryMovieRouter'
 import cors from 'cors'
 import 'dotenv/config'
 import 'reflect-metadata';

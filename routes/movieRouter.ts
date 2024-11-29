@@ -2,8 +2,8 @@ import {Router} from 'express'
 import { authenticateJWT } from '../middlewares/jwtMiddleware'
 import { getMovieFromApi, addMovie, deleteMovie } from "../controllers/movieController";
 
-const userRouter : Router = Router()
+const movieRouter : Router = Router()
 
-userRouter.get('/movies/:id', authenticateJWT, getMovieFromApi)
+movieRouter.get('/movies/:id', authenticateJWT, getMovieFromApi)
 
-export default userRouter
+export default movieRouter
