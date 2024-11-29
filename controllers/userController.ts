@@ -24,8 +24,12 @@ export const getAllUsers = async (
 };
 
 export const getUserProfile = async ( req: Request, res: Response): Promise<any> => {
-  const { id } = req.params;
+  var { id } = req.params;
+
   try {
+    if (id == undefined) {
+      id = (req as Request & { user: any }).user.id;
+    }
     const userByID = await userRepository.findOneBy({ id: parseInt(id) });
     if (!userByID) {
       return res.json({ message: `User not found` });

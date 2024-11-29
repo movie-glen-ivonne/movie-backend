@@ -5,7 +5,7 @@ import { checkAdmin, checkAccess } from "../middlewares/checkAdmin";
 
 const userRouter : Router = Router()
 
-userRouter.get('/profile/:id', authenticateJWT, checkAccess, getUserProfile)
+userRouter.get('/profile/', authenticateJWT, getUserProfile)
 userRouter.get("/users", authenticateJWT, checkAdmin, getAllUsers);
 userRouter.get('/users/:id', authenticateJWT, checkAccess, getUserProfile)
 userRouter.put("/users/:id", authenticateJWT, checkAccess, updateUser);
