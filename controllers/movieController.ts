@@ -14,10 +14,9 @@ export const getMoviesFromApi = async (req: Request, res: Response): Promise<Res
     const query = req.query.query as string; 
     console.log('searchQuery', query);
     const searchQueryEncoded = encodeURIComponent(query);
-    const userId = (req as Request & { user: any }).user.id
 
     try {
-        console.log('searchQueryEncoded', searchQueryEncoded);
+        console.log('API_MOVIE_URL ', API_MOVIE_URL);
         const response = await axios.get(API_MOVIE_URL + `/search/multi`, {
             params: {
                 query: searchQueryEncoded
