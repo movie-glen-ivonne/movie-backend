@@ -2,6 +2,7 @@ import express, {Application} from 'express';
 import { AppDataSource } from './database/db';
 import authRouter from './routes/authRouter'
 import userRouter from './routes/userRouter'
+import searchRouter from './routes/searchRouter'
 import cors from 'cors'
 import 'dotenv/config'
 import 'reflect-metadata';
@@ -16,7 +17,7 @@ app.use(cors())
 
 AppDataSource.initialize()
   .then(() => {
-    app.use('/api', authRouter, userRouter)
+    app.use('/api', authRouter, userRouter, searchRouter)
     app.listen(port, () => console.log(`Welcome to our server running on port ${port} 🟢`))
     console.log('Database connected');
   })

@@ -48,6 +48,8 @@ jobs:
             --build-arg DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
             --build-arg DB_TYPE=${{ secrets.DB_TYPE }} \
             --build-arg PORT=${{ secrets.PORT }} \
+            --build-arg PORT=${{ secrets.API_MOVIE_KEY }} \
+            --build-arg PORT=${{ secrets.API_MOVIE_URL }} \
             --build-arg JWT_SECRET=${{ secrets.JWT_SECRET }} \
             -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/movie_project_bk:latest .
           docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/movie_project_bk:latest
