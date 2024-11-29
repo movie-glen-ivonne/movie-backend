@@ -8,19 +8,28 @@ export class Movie {
   id!: number;
 
   @Column()
+  externalId!: number;
+
+  @Column()
   name!: string;
 
   @Column()
   overview!: number;
 
-  @Column()
-  original_title!: string;
+  @Column({ nullable: true })
+  original_name!: string;
 
   @Column({ nullable: true })
   poster_path!: string;
 
-  @Column()
-  release_date!: Date;
+  @Column({ nullable: true })
+  first_air_date!: Date;
+
+  @Column({ nullable: true })
+  vote_average!: number;
+
+  @Column({ nullable: true })
+  video_url!: string;
 
   @OneToMany(() => LibraryMovie, (libraryMovie: any) => libraryMovie.movies, { onDelete: "CASCADE" })
   libraryMovie: any | LibraryMovie[];

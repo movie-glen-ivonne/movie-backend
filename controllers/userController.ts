@@ -24,7 +24,7 @@ export const getAllUsers = async (
 };
 
 export const getUserProfile = async ( req: Request, res: Response): Promise<any> => {
-  var { id } = req.params;
+  var { id } = await req.params;
 
   try {
     if (id == undefined) {
@@ -42,7 +42,7 @@ export const getUserProfile = async ( req: Request, res: Response): Promise<any>
 };
 
 export const updateUser = async (req: Request, res: Response): Promise<any> => {
-  const { id } = req.params;
+  const { id } = await req.params;
 
   const { name, email, newPassword, isAdmin} = req.body;
   const image = '/public/images/' + req.file?.filename
@@ -80,7 +80,7 @@ export const updateUser = async (req: Request, res: Response): Promise<any> => {
 };
 
 export const deleteUser = async (req: Request, res: Response): Promise<any> => {
-  const { id } = req.params;
+  const { id } = await req.params;
   try {
     const deleteUserByID = await userRepository.delete({ id: parseInt(id) });
     if (deleteUserByID.affected === 0) {

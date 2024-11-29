@@ -1,6 +1,7 @@
 // Display all songs that belong to a specific user id
 import { Request, Response } from 'express';
 import { AppDataSource } from '../database/db';
+import { Movie } from "../entities/Movie"
 import axios from 'axios';
 import { createClient } from 'redis';
 import 'dotenv/config';
@@ -11,8 +12,7 @@ const DEFAULT_EXPIRATION = Number(process.env.DEFAULT_EXPIRATION_TIME); // Defau
 
 export const getMoviesFromApi = async (req: Request, res: Response): Promise<Response | any> => {
 
-    const query = req.query.query as string; 
-    console.log('searchQuery', query);
+    const query = await req.query.query as string; 
     const searchQueryEncoded = encodeURIComponent(query);
 
     try {
@@ -25,9 +25,7 @@ export const getMoviesFromApi = async (req: Request, res: Response): Promise<Res
                 'Authorization': `Bearer ${API_MOVIE_KEY}`
             }
         });
-        const data = response.data.results;
-        console.log(data)
-        const filteredMovies = data
+        const filteredMovies = response.data.results
             .filter((data: { media_type: string; }) => data.media_type !== 'person') // Filter out 'person'
             .map((movie: { id: number, poster_path: string, media_type: string }) => ({
                 id: movie.id,
@@ -36,14 +34,62 @@ export const getMoviesFromApi = async (req: Request, res: Response): Promise<Res
             }));
 
       
-        if (data) {
+        if (response.data.results) {
             return res.json(filteredMovies);
         } else {
             return res.status(400).json({ message: 'No matching results found' });
         }
     } catch (error) {
-        console.error('Error fetching songs from Genius API:', error);
-        return res.status(500).json({ message: 'Error fetching songs from Genius API' });
+        console.error('Error fetching movies from external API:', error);
+        return res.status(500).json({ message: 'Error fetching movies from external API' });
+    }
+};
+
+export const getMovieFromApi = async (req: Request, res: Response): Promise<Response | any> => {
+    
+    var { id } = await req.params;
+    console.log('searchQuery', id);
+    const idEncoded = encodeURIComponent(id);
+
+    try {
+        console.log('API_MOVIE_URL ', API_MOVIE_URL);
+        const response = await axios.get(API_MOVIE_URL + `/movie/${id}`, {
+            headers: {
+                'Authorization': `Bearer ${API_MOVIE_KEY}`
+            }
+        });
+        const movie = response.data;
+        const finalUrl = `${API_MOVIE_URL}/movie/${id}/videos`;
+        var videoResponse = await axios.get(finalUrl, {
+            params: {
+                id: idEncoded
+            },
+            headers: {
+                'Authorization': `Bearer ${API_MOVIE_KEY}`
+            }
+        });
+        const checkDB = await AppDataSource.getRepository(Movie).findOneBy({externalId : Number.parseInt(id)})
+        
+        const filteredMovies = {
+            id: movie.id,
+            poster_path: movie.poster_path,
+            first_air_date: movie.media_type === 'movie' ? movie.release_date : movie.first_air_date,
+            original_name: movie.media_type === 'movie' ? movie.original_title : movie.original_name,
+            overview: movie.overview,
+            vote_average: movie.vote_average,
+            video_url: `https://www.youtube.com/watch?v=${videoResponse.data.results[0].key}`,
+            saved: checkDB ? true : false,
+        };
+
+      
+        if (filteredMovies) {
+            return res.json(filteredMovies);
+        } else {
+            return res.status(400).json({ message: 'No matching results found' });
+        }
+    } catch (error) {
+        console.error('Error fetching movies from external API:', error);
+        return res.status(500).json({ message: 'Error fetching movies from external API' });
     }
 };
 

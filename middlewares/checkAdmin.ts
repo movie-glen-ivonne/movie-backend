@@ -26,7 +26,7 @@ export const checkAccess = async (req: Request, res: Response, next : NextFuncti
     
     try {
         const userId = (req as Request & { user: any }).user.id
-        const { id } = req.params;
+        const { id } = await req.params;
       
         const profile: User  = await getProfile(userId)
         if (profile.isAdmin == false && id != userId){
