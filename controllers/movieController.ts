@@ -2,6 +2,8 @@
 import { Request, Response } from 'express';
 import { AppDataSource } from '../database/db';
 import { Movie } from "../entities/Movie"
+import { LibraryMovie } from "../entities/LibraryMovie"
+import { Library } from "../entities/Library"
 import axios from 'axios';
 import { createClient } from 'redis';
 import 'dotenv/config';
@@ -81,7 +83,7 @@ export const getMovieFromApi = async (req: Request, res: Response): Promise<Resp
             saved: checkDB ? true : false,
         };
 
-      
+        console.log(filteredMovies)
         if (filteredMovies) {
             return res.json(filteredMovies);
         } else {
@@ -93,12 +95,50 @@ export const getMovieFromApi = async (req: Request, res: Response): Promise<Resp
     }
 };
 
-export const addMovie = async (req: Request, res: Response): Promise<Response | any> => { // Save a song to the database for a specific user id   
-    const userId = (req as Request & { user: any }).user
-    const { title, singer, cover, created_date, description, url, id, playlistId } = req.body
+export const addMovie = async (req: Request, res: Response): Promise<Response | any> => { 
     try {
+        const movieRepository = AppDataSource.getRepository(Movie);
+    
+        const userId = (req as Request & { user: any }).user.id
+        const { libraryId, movie } = req.body;
+        const { id, original_name, first_air_date, poster_path, overview, vote_average, video_url } = movie; 
+        var internalIdMovie = 0
+
+        const checkLibrary = await AppDataSource.getRepository(Library).findOneBy({id : libraryId, user: userId});
+
+        if (!checkLibrary){
+            return res.status(404).json({ message: "Library does not exist" });
+        }
+
+        const checkMovie = await AppDataSource.getRepository(Movie).findOneBy({externalId : Number.parseInt(id)})
+
+        if (!checkMovie) {
+            const newMovie = new Movie();
+            newMovie.original_name = original_name ?? null;
+            newMovie.externalId = id ?? null;
+            newMovie.first_air_date = first_air_date ?? null;
+            newMovie.poster_path = poster_path ?? null;
+            newMovie.overview = overview ?? null;
+            newMovie.vote_average = vote_average ?? null;
+            newMovie.video_url = video_url ?? null;
+            const movie = await movieRepository.save(newMovie);
+            internalIdMovie = movie.id
+        } else{
+            internalIdMovie = checkMovie.id
+        }
+
+        const checkDB = await AppDataSource.getRepository(LibraryMovie).findOneBy({movie : internalIdMovie, library : libraryId})
+
+        if(checkDB){
+            return res.status(404).json({message: "The movie is already part of this library"})
+        }
         
-        return res.status(201).json({ message: "Song was saved successfully!" })
+        const newAdded = new LibraryMovie();
+        newAdded.library = libraryId
+        newAdded.movie = internalIdMovie
+        await AppDataSource.getRepository(LibraryMovie).save(newAdded);
+
+        return res.status(201).json({ message: "Movie added successfully!" })
     } catch (err) {
         console.log(err)
         return res.status(500).json({ message: "Internal server error!" })
@@ -106,14 +146,40 @@ export const addMovie = async (req: Request, res: Response): Promise<Response | 
 }
 
 export const deleteMovie = async (req: Request, res: Response): Promise<Response | any> => {
-    const userId = (req as Request & { user: any }).user
-    const songId = req.params.id
     try {
-       
-            return res.status(404).json({ message: `Song not found` })
+        const movieLibraryRepository = AppDataSource.getRepository(LibraryMovie);
+
+        const userId = (req as Request & { user: any }).user.id
+        const { libraryId, idMovie} = req.body;
+        var internalIdMovie = 0
+
+        const checkMovie = await AppDataSource.getRepository(Movie).findOneBy({externalId : Number.parseInt(idMovie)})
+
+        if (!checkMovie) {
+            return res.status(404).json({ message: "Invalid data" });
+        }
+        else {
+            internalIdMovie = checkMovie.externalId
+        }
+
+        const checkLibrary = await AppDataSource.getRepository(Library).findOneBy({id : libraryId, user: userId});
+
+        if (!checkLibrary){
+            return res.status(404).json({ message: "Invalid data" });
+        }
+
+        const checkDB = await movieLibraryRepository.findOneBy({movie : internalIdMovie, library : libraryId})
+
+        if(!checkDB){
+            return res.status(404).json({message: "Invalid data"})
+        }
+        else {
+            await movieLibraryRepository.delete({movie : internalIdMovie, library : libraryId});
+            return res.status(201).json({ message: "Movie removed successfully!" })
+        }
         
     } catch (err) {
         console.log(err)
-        return res.status(500).json({ message: `Internal server error` })
+        return res.status(500).json({ message: "Internal server error!" })
     }
 }

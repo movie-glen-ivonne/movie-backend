@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany} from "typeorm";
 import { User } from "./User";
 import { LibraryMovie } from "./LibraryMovie";
+import { Movie } from "./Movie";
 
 @Entity()
 export class Library {
@@ -16,6 +17,6 @@ export class Library {
   @ManyToOne(() => User, (user: any) => user.libraries, { onDelete: "CASCADE" })
   user: any | User;
 
-  @OneToMany(() => LibraryMovie, (libraryMovie: any) => libraryMovie.movies, { onDelete: "CASCADE" })
-  libraryMovie: any | LibraryMovie[];
+  @OneToMany(() => LibraryMovie, (libraryMovie: any) => libraryMovie.library, { onDelete: "CASCADE" })
+  movies: any | Movie[];
 }

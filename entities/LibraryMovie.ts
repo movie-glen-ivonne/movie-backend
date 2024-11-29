@@ -7,10 +7,10 @@ export class LibraryMovie {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @ManyToOne(() => Movie, (movie: any) => movie.libraryMovie, { onDelete: "CASCADE" })
+  @ManyToOne(() => Movie, (movie: any) => movie.libraries, { onDelete: "CASCADE" })
   movie: any | Movie;
 
-  @ManyToOne(() => Library, (library: any) => library.libraryMovie, { onDelete: "CASCADE" })
+  @ManyToOne(() => Library, (library: any) => library.movies, { onDelete: "CASCADE" })
   library: any | Library;
 
 }

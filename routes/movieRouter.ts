@@ -1,6 +1,6 @@
 import {Router} from 'express'
 import { authenticateJWT } from '../middlewares/jwtMiddleware'
-import { getMovieFromApi } from "../controllers/movieController";
+import { getMovieFromApi, addMovie, deleteMovie } from "../controllers/movieController";
 
 const userRouter : Router = Router()
 

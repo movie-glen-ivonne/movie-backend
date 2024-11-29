@@ -11,10 +11,7 @@ export class Movie {
   externalId!: number;
 
   @Column()
-  name!: string;
-
-  @Column()
-  overview!: number;
+  overview!: string;
 
   @Column({ nullable: true })
   original_name!: string;
@@ -25,12 +22,12 @@ export class Movie {
   @Column({ nullable: true })
   first_air_date!: Date;
 
-  @Column({ nullable: true })
+  @Column({ type: 'float', nullable: true })
   vote_average!: number;
 
   @Column({ nullable: true })
   video_url!: string;
 
-  @OneToMany(() => LibraryMovie, (libraryMovie: any) => libraryMovie.movies, { onDelete: "CASCADE" })
-  libraryMovie: any | LibraryMovie[];
+  @OneToMany(() => LibraryMovie, (libraryMovie: any) => libraryMovie.library, { onDelete: "CASCADE" })
+  libraries: any | Movie[];
 }
