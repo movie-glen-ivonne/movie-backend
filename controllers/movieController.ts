@@ -104,7 +104,7 @@ export const addMovie = async (req: Request, res: Response): Promise<Response | 
     
         const userId = (req as Request & { user: any }).user.id
         const { libraryId, movie } = req.body;
-        const { id, original_name, first_air_date, poster_path, overview, vote_average, video_url } = movie; 
+        const { id, original_name, first_air_date, poster_path, overview, vote_average, video_url, media_type } = movie; 
         var internalIdMovie = 0
 
         const checkLibrary = await AppDataSource.getRepository(Library).findOneBy({id : libraryId, user: userId});
@@ -123,6 +123,7 @@ export const addMovie = async (req: Request, res: Response): Promise<Response | 
             newMovie.overview = overview ?? null;
             newMovie.vote_average = vote_average ?? null;
             newMovie.video_url = video_url ?? null;
+            newMovie.media_type = media_type ?? null;
             const movie = await movieRepository.save(newMovie);
             internalIdMovie = movie.id
         } else{

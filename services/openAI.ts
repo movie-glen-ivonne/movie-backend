@@ -6,21 +6,21 @@ dotenv.config();
 const apiKey = process.env.OPENAI_KEY;
 
 const openai = new OpenAIApi({
-    organization: "org-xp98QTW8xh4SGPfEfnWHx1nj",
-    project: "$PROJECT_ID",
-    apiKey: process.env.OP
+    organization: process.env.OPENAI_ORGANIZATON,
+    project: process.env.OPENAI_PROJECT,
+    apiKey: process.env.OPENAI_API_KEY
 });
 
 
-async function getTop10MoviesInCSV(movieList: {name: string }[]): Promise<void> {
-    const moviesString = movieList.map(movie => `${movie.name}`).join(", ");
+export async function getTop10Movies(movieList: string[]): Promise<void> {
+    const moviesString = movieList.map(movie => `${movie}`).join(", ");
     console.log(moviesString)
     const completion = await openai.chat.completions.create({
         model: "gpt-4o-mini",
         messages: [
             {
                 role: "system",
-                content: "Based on the following list of movies, return a list in CSV format of your top 10 recommended movies.",
+                content: "Based on the following list of movies, return a JSON array your top 10 recommended movies. (only their ORIGINAL NAME), You can not include the movies given to you",
             },
             {
                 role: "user",

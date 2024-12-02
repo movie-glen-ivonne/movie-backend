@@ -28,6 +28,9 @@ export class Movie {
   @Column({ nullable: true })
   video_url!: string;
 
+  @Column({ nullable: true })
+  media_type!: string;
+
   @OneToMany(() => LibraryMovie, (libraryMovie: any) => libraryMovie.library, { onDelete: "CASCADE" })
   libraries: any | Movie[];
 }
