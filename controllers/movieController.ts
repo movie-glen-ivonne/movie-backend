@@ -50,18 +50,21 @@ export const getMoviesFromApi = async (req: Request, res: Response): Promise<Res
 export const getMovieFromApi = async (req: Request, res: Response): Promise<Response | any> => {
     
     var { id } = await req.params;
+    const { type } = req.query; 
+
     console.log('searchQuery', id);
     const idEncoded = encodeURIComponent(id);
 
     try {
         console.log('API_MOVIE_URL ', API_MOVIE_URL);
-        const response = await axios.get(API_MOVIE_URL + `/movie/${id}`, {
+
+        const response = await axios.get(API_MOVIE_URL + `/${type}/${id}`, {
             headers: {
                 'Authorization': `Bearer ${API_MOVIE_KEY}`
             }
         });
         const movie = response.data;
-        const finalUrl = `${API_MOVIE_URL}/movie/${id}/videos`;
+        const finalUrl = `${API_MOVIE_URL}/${type}/${id}/videos`;
         var videoResponse = await axios.get(finalUrl, {
             params: {
                 id: idEncoded

@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import { AppDataSource } from '../database/db';
 import { Library } from '../entities/Library';
-import { Movie } from '../entities/Movie';
-import { LibraryMovie } from '../entities/LibraryMovie';
+import { ILike } from "typeorm";
+
 
 const libraryRepository = AppDataSource.getRepository(Library);
 
@@ -16,6 +16,17 @@ export const createLibrary = async (req: Request, res: Response): Promise<Respon
     library.user = userId;
 
     try {
+        const checkExistense = await libraryRepository.find({
+            where: {
+                name: ILike(`%${name}%`),
+                user: userId
+            },
+        });
+        
+        if (checkExistense){
+            return res.status(409).json({message: "Library already exists.",});
+        }
+
         const savedLibrary = await libraryRepository.save(library);
         return res.status(201).json({ message: 'Library created successfully', library: savedLibrary });
     } catch (error) {
