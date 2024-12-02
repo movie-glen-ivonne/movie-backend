@@ -11,9 +11,9 @@ export class Movie {
   externalId!: number;
 
   @Column()
-  overview!: string;
+  overview!: string;  
 
-  @Column({ nullable: true })
+  @Column()
   original_name!: string;
 
   @Column({ nullable: true })

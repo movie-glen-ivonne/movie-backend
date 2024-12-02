@@ -12,9 +12,9 @@ const openai = new OpenAIApi({
 });
 
 
-async function getTop10MoviesInCSV(movieList: { id: number; title: string }[]): Promise<void> {
-    const moviesString = movieList.map(movie => `${movie.title}`).join(", ");
-
+async function getTop10MoviesInCSV(movieList: {name: string }[]): Promise<void> {
+    const moviesString = movieList.map(movie => `${movie.name}`).join(", ");
+    console.log(moviesString)
     const completion = await openai.chat.completions.create({
         model: "gpt-4o-mini",
         messages: [

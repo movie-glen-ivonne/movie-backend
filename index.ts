@@ -6,6 +6,7 @@ import searchRouter from './routes/searchRouter'
 import movieRouter from './routes/movieRouter'
 import libraryRouter from './routes/libraryRouter'
 import libraryMovieRouter from './routes/libraryMovieRouter'
+import recommendationRotuer from './routes/recommendationRouter'
 import cors from 'cors'
 import 'dotenv/config'
 import 'reflect-metadata';
@@ -20,7 +21,7 @@ app.use(cors())
 
 AppDataSource.initialize()
   .then(() => {
-    app.use('/api', authRouter, userRouter, searchRouter, movieRouter, libraryRouter, libraryMovieRouter)
+    app.use('/api', authRouter, userRouter, searchRouter, movieRouter, libraryRouter, libraryMovieRouter, recommendationRotuer)
     app.listen(port, () => console.log(`Welcome to our server running on port ${port} 🟢`))
     console.log('Database connected');
   })

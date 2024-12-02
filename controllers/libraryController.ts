@@ -1,8 +1,6 @@
 import { Request, Response } from 'express';
 import { AppDataSource } from '../database/db';
 import { Library } from '../entities/Library';
-import { ILike } from "typeorm";
-
 
 const libraryRepository = AppDataSource.getRepository(Library);
 
@@ -16,14 +14,15 @@ export const createLibrary = async (req: Request, res: Response): Promise<Respon
     library.user = userId;
 
     try {
-        const checkExistense = await libraryRepository.find({
-            where: {
-                name: ILike(`%${name}%`),
-                user: userId
-            },
-        });
-        
-        if (checkExistense){
+        const libraries = await AppDataSource.getRepository(Library).find({ where: { user: userId } });
+
+        const checkExistence = libraries.some(
+            (library) => library.name.toLowerCase() === name.toLowerCase()
+        );
+
+        console.log(checkExistence)
+   
+        if (checkExistence){
             return res.status(409).json({message: "Library already exists.",});
         }
 
@@ -102,9 +101,10 @@ export const updateLibrary = async (req: Request, res: Response): Promise<Respon
 
 export const deleteLibrary = async (req: Request, res: Response): Promise<Response| any> => {
     const { id } = req.params;
-
+    const userId = (req as Request & { user: any }).user.id
+    
     try {
-        const library = await libraryRepository.findOneBy({ id: Number(id) });
+        const library = await libraryRepository.findOneBy({ id: Number(id), user : userId });
 
         if (!library) {
             return res.status(404).json({ message: 'Library not found' });

@@ -74,12 +74,12 @@ export const getMovieFromApi = async (req: Request, res: Response): Promise<Resp
             }
         });
         const checkDB = await AppDataSource.getRepository(Movie).findOneBy({externalId : Number.parseInt(id)})
-        
+        console.log(movie)
         const filteredMovies = {
             id: movie.id,
             poster_path: movie.poster_path,
-            first_air_date: movie.media_type === 'movie' ? movie.release_date : movie.first_air_date,
-            original_name: movie.media_type === 'movie' ? movie.original_title : movie.original_name,
+            first_air_date: type === 'movie' ? movie.release_date : movie.first_air_date,
+            original_name: type === 'movie' ? movie.original_title : movie.original_name,
             overview: movie.overview,
             vote_average: movie.vote_average,
             video_url: `https://www.youtube.com/watch?v=${videoResponse.data.results[0].key}`,
@@ -108,7 +108,6 @@ export const addMovie = async (req: Request, res: Response): Promise<Response | 
         var internalIdMovie = 0
 
         const checkLibrary = await AppDataSource.getRepository(Library).findOneBy({id : libraryId, user: userId});
-
         if (!checkLibrary){
             return res.status(404).json({ message: "Library does not exist" });
         }
@@ -129,8 +128,14 @@ export const addMovie = async (req: Request, res: Response): Promise<Response | 
         } else{
             internalIdMovie = checkMovie.id
         }
-
-        const checkDB = await AppDataSource.getRepository(LibraryMovie).findOneBy({movie : internalIdMovie, library : libraryId})
+        console.log("internalIdMovie " + internalIdMovie)
+    
+        const checkDB = await AppDataSource.getRepository(LibraryMovie)
+            .createQueryBuilder("libraryMovie")
+            .innerJoin("libraryMovie.movie", "movie", "movie.id = :movieId", { movieId: internalIdMovie })
+            .innerJoin("libraryMovie.library", "library", "library.id = :libraryId", { libraryId: libraryId })
+            .where("libraryMovie.movie = :movieId AND libraryMovie.library = :libraryId", { movieId: internalIdMovie, libraryId: libraryId })
+            .getOne();
 
         if(checkDB){
             return res.status(404).json({message: "The movie is already part of this library"})
@@ -162,7 +167,7 @@ export const deleteMovie = async (req: Request, res: Response): Promise<Response
             return res.status(404).json({ message: "Invalid data" });
         }
         else {
-            internalIdMovie = checkMovie.externalId
+            internalIdMovie = checkMovie.id
         }
 
         const checkLibrary = await AppDataSource.getRepository(Library).findOneBy({id : libraryId, user: userId});
@@ -170,8 +175,13 @@ export const deleteMovie = async (req: Request, res: Response): Promise<Response
         if (!checkLibrary){
             return res.status(404).json({ message: "Invalid data" });
         }
-
-        const checkDB = await movieLibraryRepository.findOneBy({movie : internalIdMovie, library : libraryId})
+        console.log(internalIdMovie)
+        const checkDB = await AppDataSource.getRepository(LibraryMovie)
+            .createQueryBuilder("libraryMovie")
+            .innerJoin("libraryMovie.movie", "movie", "movie.id = :movieId", { movieId: internalIdMovie })
+            .innerJoin("libraryMovie.library", "library", "library.id = :libraryId", { libraryId: libraryId })
+            .where("libraryMovie.movie = :movieId AND libraryMovie.library = :libraryId", { movieId: internalIdMovie, libraryId: libraryId })
+            .getOne();
 
         if(!checkDB){
             return res.status(404).json({message: "Invalid data"})
