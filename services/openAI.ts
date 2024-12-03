@@ -12,7 +12,7 @@ const openai = new OpenAIApi({
 });
 
 
-export async function getTop10Movies(movieList: string[]): Promise<void> {
+export async function getTop10Movies(movieList: string[]): Promise<string> {
     const moviesString = movieList.map(movie => `${movie}`).join(", ");
     console.log(moviesString)
     const completion = await openai.chat.completions.create({
@@ -20,7 +20,7 @@ export async function getTop10Movies(movieList: string[]): Promise<void> {
         messages: [
             {
                 role: "system",
-                content: "Based on the following list of movies, return a JSON array your top 10 recommended movies. (only their ORIGINAL NAME), You can not include the movies given to you",
+                content: "Based on the following list of movies and/or TV shows, return a JSON array (in a plain string format, and not include this in your answer ```json) your top 10 recommended movies and/or TV shows. (only their ORIGINAL NAME), You can not include the movies given to you",
             },
             {
                 role: "user",
@@ -32,4 +32,5 @@ export async function getTop10Movies(movieList: string[]): Promise<void> {
     const csvResult = completion.choices[0].message?.content || "No response";
     console.log("CSV of Top 10 Movies:");
     console.log(csvResult);
+    return csvResult;
 }

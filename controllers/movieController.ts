@@ -77,6 +77,7 @@ export const getMovieFromApi = async (req: Request, res: Response): Promise<Resp
         const movie = response.data;
         const checkDB = await AppDataSource.getRepository(Movie).findOneBy({externalId : Number.parseInt(id)})
 
+
         const filteredMovies = {
             id: movie.id,
             poster_path: movie.poster_path,
