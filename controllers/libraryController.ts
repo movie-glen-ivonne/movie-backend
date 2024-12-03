@@ -6,31 +6,33 @@ const libraryRepository = AppDataSource.getRepository(Library);
 
 export const createLibrary = async (req: Request, res: Response): Promise<Response | any> => {
     const { name } = req.body;
-    const userId = (req as Request & { user: any }).user.id
-
-    const library = new Library();
-    library.name = name;
-    library.creationDate = new Date();
-    library.user = userId;
+    const userId = (req as Request & { user: any }).user.id;
 
     try {
-        const libraries = await AppDataSource.getRepository(Library).find({ where: { user: userId } });
+        // Check if a library with the same name exists for the user
+        const existingLibrary = await AppDataSource.getRepository(Library).findOne({
+            where: {
+                user: userId,
+                name: name.toLowerCase(), // Case-insensitive check
+            },
+        });
 
-        const checkExistence = libraries.some(
-            (library) => library.name.toLowerCase() === name.toLowerCase()
-        );
-
-        console.log(checkExistence)
-   
-        if (checkExistence){
-            return res.status(409).json({message: "Library already exists.",});
+        if (existingLibrary) {
+            return res.status(409).json({ message: "Library already exists." });
         }
 
-        const savedLibrary = await libraryRepository.save(library);
-        return res.status(201).json({ message: 'Library created successfully', library: savedLibrary });
+        // Create a new library
+        const library = new Library();
+        library.name = name;
+        library.creationDate = new Date();
+        library.user = userId;
+
+        const savedLibrary = await AppDataSource.getRepository(Library).save(library);
+
+        return res.status(201).json({ message: "Library created successfully", library: savedLibrary });
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ message: 'Failed to create library' });
+        return res.status(500).json({ message: "Failed to create library" });
     }
 };
 
@@ -84,20 +86,35 @@ export const getLibraryById = async (req: Request, res: Response): Promise<Respo
     }
 };
 
-export const updateLibrary = async (req: Request, res: Response): Promise<Response| any> => {
+export const updateLibrary = async (req: Request, res: Response): Promise<Response | any> => {
     const { id } = req.params;
-    const userId = (req as Request & { user: any }).user.id
+    const userId = (req as Request & { user: any }).user.id;
     const { name } = req.body;
 
     try {
-        const library = await libraryRepository.findOneBy({ id: Number(id), user : userId });
+
+        const library = await libraryRepository.findOneBy({ id: Number(id), user: userId });
 
         if (!library) {
             return res.status(404).json({ message: 'Library not found' });
         }
 
+        if (name) {
+            const existingLibrary = await libraryRepository.findOne({
+                where: {
+                    user: userId,
+                    name: name.toLowerCase(),
+                },
+            });
+
+            if (existingLibrary && existingLibrary.id !== library.id) {
+                return res.status(409).json({ message: 'Library with this name already exists.' });
+            }
+        }
+
         library.name = name ?? library.name;
         await libraryRepository.save(library);
+
         return res.status(200).json({ message: 'Library updated successfully', library });
     } catch (error) {
         console.error(error);
