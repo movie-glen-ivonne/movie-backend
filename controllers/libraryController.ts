@@ -34,25 +34,31 @@ export const createLibrary = async (req: Request, res: Response): Promise<Respon
     }
 };
 
-export const getLibraries = async (req: Request, res: Response): Promise<Response| any> => {
+export const getLibraries = async (req: Request, res: Response): Promise<Response | any> => {
     try {
-        const userId = (req as Request & { user: any }).user.id
-        const libraries = await libraryRepository.findBy({user: { id: userId }})
+        const userId = (req as Request & { user: any }).user.id;
+
+        // Fetch all libraries and their movies in one query
+        const libraries = await libraryRepository.find({
+            where: { user: { id: userId } },
+            relations: ['movies', 'movies.movie'], // Eager load movies and movie data
+        });
+
         if (libraries.length < 1) {
-            return res.status(204).json({ message: 'No libraries found' })
-        }
-        var librariesInfo: any[] = []
-
-        for (const record of libraries) {
-            const item = await getLibraryInfo(record.id);  
-            librariesInfo.push(item); 
+            return res.status(204).json({ message: 'No libraries found' });
         }
 
-        return res.status(200).json(librariesInfo)
-    }
-    catch (err) {
-        console.log(err)
-        return res.status(500).json({ error: 'Internal server error 🔴' })
+        // Map the data into the required format
+        const librariesInfo = libraries.map((library) => ({
+            id: library.id,
+            name: library.name,
+            movies: library.movies || [],
+        }));
+
+        return res.status(200).json(librariesInfo);
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({ error: 'Internal server error 🔴' });
     }
 };
 
