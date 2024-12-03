@@ -22,21 +22,6 @@ export const getRecommendations = async (req: Request, res: Response): Promise<R
 
         const movies = await getLibraryInfo(library.id); 
         const recommendations = JSON.parse(await getTop10Movies(movies))
-
-        console.log('movies' + movies)
-        /*const recommendations = [
-            "Spirited Away",
-            "Your Name",
-            "Akira",
-            "Princess Mononoke",
-            "A Silent Voice",
-            "Ghost in the Shell",
-            "Perfect Blue",
-            "My Neighbor Totoro",
-            "Attack on Titan: Junior High",
-            "Naruto Shippuden: The Movie"
-        ];*/
-
         const promises = recommendations.map(async (movie: string) => {
             try {
                 console.log(movie);
