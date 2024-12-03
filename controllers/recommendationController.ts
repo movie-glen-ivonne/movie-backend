@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { AppDataSource } from '../database/db';
 import { Library } from '../entities/Library';
 import { LibraryMovie } from '../entities/LibraryMovie';
-import { Movie } from '../entities/Movie';
 import axios from 'axios';
 import { getTop10Movies } from '../services/openAI'
 
@@ -12,7 +11,6 @@ const API_MOVIE_KEY = process.env.API_MOVIE_KEY;
 
 export const getRecommendations = async (req: Request, res: Response): Promise<Response | any> => {
     try {
-        console.log('start')
         const finalRecommendations: string[] = [];
         const { id } = req.params;
         const userId = (req as Request & { user: any }).user.id;
@@ -39,8 +37,6 @@ export const getRecommendations = async (req: Request, res: Response): Promise<R
             "Naruto Shippuden: The Movie"
         ];*/
 
-        console.log("sending response")
-
         const promises = recommendations.map(async (movie: string) => {
             try {
                 console.log(movie);
@@ -53,7 +49,6 @@ export const getRecommendations = async (req: Request, res: Response): Promise<R
         
         const results = await Promise.all(promises);
         finalRecommendations.push(...results.filter((result) => result !== null));
-        console.log("sending response")
         return finalRecommendations.length > 0
             ? res.status(200).json(finalRecommendations)
             : res.status(400).json({ message: 'No matching results found' });
