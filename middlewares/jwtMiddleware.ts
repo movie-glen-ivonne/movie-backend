@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken'
 export const authenticateJWT = async (req: Request, res: Response, next: NextFunction): Promise<Response | any> => {
 
     const token = req.headers.authorization?.split(' ')[1]
+    console.log(token);
     try {
         if (!token) {
             return res.status(400).json({message: "Forbiden access, token is mising!"})

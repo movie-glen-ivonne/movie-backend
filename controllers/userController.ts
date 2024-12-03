@@ -81,7 +81,14 @@ export const updateUser = async (req: Request, res: Response): Promise<any> => {
 
 export const deleteUser = async (req: Request, res: Response): Promise<any> => {
   const { id } = await req.params;
+  const userId = (req as Request & { user: any }).user.id;
+  console.log(id);
+  console.log(userId);
   try {
+
+    if (userId == id) {
+      return res.json({ message: `You can't delete your own account!` });
+    }
     const deleteUserByID = await userRepository.delete({ id: parseInt(id) });
     if (deleteUserByID.affected === 0) {
       return res.json({ message: `No user found` });
