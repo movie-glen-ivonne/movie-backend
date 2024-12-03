@@ -50,6 +50,9 @@ jobs:
             --build-arg PORT=${{ secrets.PORT }} \
             --build-arg API_MOVIE_KEY=${{ secrets.API_MOVIE_KEY }} \
             --build-arg API_MOVIE_URL=${{ secrets.API_MOVIE_URL }} \
+            --build-arg OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} \
+            --build-arg OPENAI_ORGANIZATON=${{ secrets.OPENAI_ORGANIZATON }} \
+            --build-arg OPENAI_PROJECT=${{ secrets.OPENAI_PROJECT }} \
             --build-arg JWT_SECRET=${{ secrets.JWT_SECRET }} \
             -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/movie_project_bk:latest .
           docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/movie_project_bk:latest
@@ -61,6 +64,7 @@ jobs:
           image: gcr.io/${{ secrets.GCP_PROJECT_ID}}/movie_project_bk
           region: ${{ secrets.GCP_REGION }}
           platform: managed
-          allow-authenticated: true
+          allow-authenticated: false
+          cloud_sql_instances: ${{ secrets.DB_INSTANCE_CONNECTION_NAM }}
         
         
