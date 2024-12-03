@@ -74,7 +74,7 @@ export const getMovieFromApi = async (req: Request, res: Response): Promise<Resp
             }
         });
         const checkDB = await AppDataSource.getRepository(Movie).findOneBy({externalId : Number.parseInt(id)})
-        console.log(movie)
+
         const filteredMovies = {
             id: movie.id,
             poster_path: movie.poster_path,
@@ -82,11 +82,11 @@ export const getMovieFromApi = async (req: Request, res: Response): Promise<Resp
             original_name: type === 'movie' ? movie.original_title : movie.original_name,
             overview: movie.overview,
             vote_average: movie.vote_average,
-            video_url: `https://www.youtube.com/watch?v=${videoResponse.data.results[0].key}`,
+            video_url: videoResponse.status === 200 ? `https://www.youtube.com/watch?v=${videoResponse.data.results[0].key}` : '',
             saved: checkDB ? true : false,
         };
 
-        console.log(filteredMovies)
+        
         if (filteredMovies) {
             return res.json(filteredMovies);
         } else {
