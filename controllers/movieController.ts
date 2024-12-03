@@ -49,32 +49,26 @@ export const getMoviesFromApi = async (req: Request, res: Response): Promise<Res
 
 export const getMovieFromApi = async (req: Request, res: Response): Promise<Response | any> => {
     
-    var { id } = await req.params;
+    var { id } = req.params;
     const { type } = req.query; 
 
-    console.log('searchQuery', id);
-    const idEncoded = encodeURIComponent(id);
-
     try {
-        console.log('API_MOVIE_URL ', API_MOVIE_URL);
 
-        const response = await axios.get(API_MOVIE_URL + `/${type}/${id}`, {
+        const response = await axios.get(API_MOVIE_URL + `/${type}/${id}?append_to_response=videos`, {
             headers: {
                 'Authorization': `Bearer ${API_MOVIE_KEY}`
             }
         });
         const movie = response.data;
-        const finalUrl = `${API_MOVIE_URL}/${type}/${id}/videos`;
-        var videoResponse = await axios.get(finalUrl, {
-            params: {
-                id: idEncoded
-            },
-            headers: {
-                'Authorization': `Bearer ${API_MOVIE_KEY}`
-            }
-        });
+        // const finalUrl = `${API_MOVIE_URL}/${type}/${id}/videos?language=en-US`;
+        // var videoResponse = await axios.get(finalUrl, {
+        //     headers: {
+        //         'Authorization': `Bearer ${API_MOVIE_KEY}`
+        //     }
+        // });
+        console.log(movie.videos.results[0]);
         const checkDB = await AppDataSource.getRepository(Movie).findOneBy({externalId : Number.parseInt(id)})
-        console.log(movie)
+
         const filteredMovies = {
             id: movie.id,
             poster_path: movie.poster_path,
@@ -82,11 +76,11 @@ export const getMovieFromApi = async (req: Request, res: Response): Promise<Resp
             original_name: type === 'movie' ? movie.original_title : movie.original_name,
             overview: movie.overview,
             vote_average: movie.vote_average,
-            video_url: `https://www.youtube.com/watch?v=${videoResponse.data.results[0].key}`,
+            media_type: type,
+            video_url: (movie.videos.results[0]) ? `https://www.youtube.com/watch?v=${movie.videos.results[0].key}` : "",
             saved: checkDB ? true : false,
         };
 
-        console.log(filteredMovies)
         if (filteredMovies) {
             return res.json(filteredMovies);
         } else {
@@ -111,9 +105,10 @@ export const addMovie = async (req: Request, res: Response): Promise<Response | 
         if (!checkLibrary){
             return res.status(404).json({ message: "Library does not exist" });
         }
-
+        
         const checkMovie = await AppDataSource.getRepository(Movie).findOneBy({externalId : Number.parseInt(id)})
 
+        console.log("gleeeeeeen " + media_type)
         if (!checkMovie) {
             const newMovie = new Movie();
             newMovie.original_name = original_name ?? null;
@@ -123,7 +118,7 @@ export const addMovie = async (req: Request, res: Response): Promise<Response | 
             newMovie.overview = overview ?? null;
             newMovie.vote_average = vote_average ?? null;
             newMovie.video_url = video_url ?? null;
-            newMovie.media_type = media_type ?? null;
+            newMovie.media_type = media_type;
             const movie = await movieRepository.save(newMovie);
             internalIdMovie = movie.id
         } else{
@@ -137,6 +132,7 @@ export const addMovie = async (req: Request, res: Response): Promise<Response | 
             .innerJoin("libraryMovie.library", "library", "library.id = :libraryId", { libraryId: libraryId })
             .where("libraryMovie.movie = :movieId AND libraryMovie.library = :libraryId", { movieId: internalIdMovie, libraryId: libraryId })
             .getOne();
+        console.log("internalIdMovie " + internalIdMovie)
 
         if(checkDB){
             return res.status(404).json({message: "The movie is already part of this library"})
@@ -176,7 +172,6 @@ export const deleteMovie = async (req: Request, res: Response): Promise<Response
         if (!checkLibrary){
             return res.status(404).json({ message: "Invalid data" });
         }
-        console.log(internalIdMovie)
         const checkDB = await AppDataSource.getRepository(LibraryMovie)
             .createQueryBuilder("libraryMovie")
             .innerJoin("libraryMovie.movie", "movie", "movie.id = :movieId", { movieId: internalIdMovie })
@@ -197,3 +192,4 @@ export const deleteMovie = async (req: Request, res: Response): Promise<Response
         return res.status(500).json({ message: "Internal server error!" })
     }
 }
+
