@@ -12,6 +12,13 @@ const API_MOVIE_URL = process.env.API_MOVIE_URL;
 const API_MOVIE_KEY = process.env.API_MOVIE_KEY;
 const DEFAULT_EXPIRATION = Number(process.env.DEFAULT_EXPIRATION_TIME); // Default expiration time for cached data in seconds
 
+// interface MovieIn {
+//     id: number;
+//     poster_path: string;
+//     media_type: string;
+//     popularity: number;
+//   }
+
 export const getMoviesFromApi = async (req: Request, res: Response): Promise<Response | any> => {
 
     const query = await req.query.query as string; 
@@ -21,21 +28,29 @@ export const getMoviesFromApi = async (req: Request, res: Response): Promise<Res
         console.log('API_MOVIE_URL ', API_MOVIE_URL);
         const response = await axios.get(API_MOVIE_URL + `/search/multi`, {
             params: {
-                query: searchQueryEncoded
+                query: searchQueryEncoded,
+                sorty_by: 'popularity.desc',
+                language: "en-US",
+                page: 1
             },
             headers: {
                 'Authorization': `Bearer ${API_MOVIE_KEY}`
             }
         });
-        const filteredMovies = response.data.results
-            .filter((data: { media_type: string; }) => data.media_type !== 'person') // Filter out 'person'
-            .map((movie: { id: number, poster_path: string, media_type: string }) => ({
-                id: movie.id,
-                poster_path: movie.poster_path,
-                media_type: movie.media_type
-            }));
 
-      
+        console.log(response.data.results)
+        const filteredMovies = response.data.results
+        .filter((data: { media_type: string; poster_path: string | null }) => 
+          data.media_type !== 'person' && data.poster_path !== null)
+        .map((movie: { id: number, poster_path: string, media_type: string, popularity: number }) => ({
+          id: movie.id,
+          poster_path: movie.poster_path,
+          media_type: movie.media_type,
+          popularity: movie.popularity
+        }))
+        .sort((a: { popularity: number }, b: { popularity: number }) => b.popularity - a.popularity);
+        
+
         if (response.data.results) {
             return res.json(filteredMovies);
         } else {
@@ -60,13 +75,6 @@ export const getMovieFromApi = async (req: Request, res: Response): Promise<Resp
             }
         });
         const movie = response.data;
-        // const finalUrl = `${API_MOVIE_URL}/${type}/${id}/videos?language=en-US`;
-        // var videoResponse = await axios.get(finalUrl, {
-        //     headers: {
-        //         'Authorization': `Bearer ${API_MOVIE_KEY}`
-        //     }
-        // });
-        console.log(movie.videos.results[0]);
         const checkDB = await AppDataSource.getRepository(Movie).findOneBy({externalId : Number.parseInt(id)})
 
         const filteredMovies = {
@@ -193,3 +201,117 @@ export const deleteMovie = async (req: Request, res: Response): Promise<Response
     }
 }
 
+export const getTrendingMovies = async (req: Request, res: Response): Promise<Response | any> => {
+    console.log('gere');
+    try {
+        const response = await fetch(`${API_MOVIE_URL}/trending/movie/week?language=en-US`, {
+            headers: {
+                'Authorization': `Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4MDY5ZmVhOTU5YWJmMmNjNDY1ZTAzMDIzY2ZkMGRmMCIsIm5iZiI6MTczMjc4NDMxNS45Mjc4NzI3LCJzdWIiOiI2NzQwOTQ5MTVjYWMwNDFjZmFlMjgxODIiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.vJNBXM5_i9wgt1cunX51nV9ti8wdqWCPL7ZPZWkHir8`,
+            },
+        });
+
+        console.log('Response Status:', response.status);  // Log response status
+
+        if (!response.ok) {
+            return res.status(response.status).json({ message: 'Error fetching trending movies' });
+        }
+
+        // Parse the JSON response body
+        const data = await response.json();
+        console.log('Fetched Data:', data);  // Log the raw data
+
+        // Process the data
+        const trendingMovies = data.results
+            .filter((item: { poster_path: string | null }) => item.poster_path !== null)
+            .map((item: { id: number, poster_path: string }) => ({
+                id: item.id,
+                poster_path: item.poster_path,
+                media_type: 'movie',
+            }));
+
+        // Return the processed data
+        return res.json(trendingMovies);
+    } catch (error) {
+        console.error('Error fetching trending movies:', error);
+        return res.status(500).json({ message: 'Error fetching trending movies' });
+    }
+};
+export const getTrendingShows = async (req: Request, res: Response): Promise<Response | any> => {
+    try {
+        const response = await axios.get(`${API_MOVIE_URL}/trending/tv/week`, {
+            headers: {
+                'Authorization': `Bearer ${API_MOVIE_KEY}`,
+            },
+            params: {
+                language: 'en-US',
+            },
+        });
+
+        const trendingShows = response.data.results
+            .filter((item: { poster_path: string | null }) => item.poster_path !== null)
+            .map((item: { id: number, poster_path: string }) => ({
+                id: item.id,
+                poster_path: item.poster_path,
+                media_type: 'tv',
+            }));
+
+        return res.json(trendingShows);
+    } catch (error) {
+        console.error('Error fetching trending TV shows:', error);
+        return res.status(500).json({ message: 'Error fetching trending TV shows' });
+    }
+};
+
+export const getTopRatedMovies = async (req: Request, res: Response): Promise<Response | any> => {
+    try {
+        const response = await axios.get(`${API_MOVIE_URL}/movie/top_rated`, {
+            headers: {
+                'Authorization': `Bearer ${API_MOVIE_KEY}`,
+            },
+            params: {
+                language: 'en-US',
+                page: 1,
+            },
+        });
+
+        const topRatedMovies = response.data.results
+            .filter((item: { poster_path: string | null }) => item.poster_path !== null)
+            .map((item: { id: number, poster_path: string }) => ({
+                id: item.id,
+                poster_path: item.poster_path,
+                media_type: 'movie',
+            }));
+
+        return res.json(topRatedMovies);
+    } catch (error) {
+        console.error('Error fetching top-rated movies:', error);
+        return res.status(500).json({ message: 'Error fetching top-rated movies' });
+    }
+};
+
+export const getTopRatedShows = async (req: Request, res: Response): Promise<Response | any> => {
+    try {
+        const response = await axios.get(`${API_MOVIE_URL}/tv/top_rated`, {
+            headers: {
+                'Authorization': `Bearer ${API_MOVIE_KEY}`,
+            },
+            params: {
+                language: 'en-US',
+                page: 1,
+            },
+        });
+
+        const topRatedShows = response.data.results
+            .filter((item: { poster_path: string | null }) => item.poster_path !== null)
+            .map((item: { id: number, poster_path: string }) => ({
+                id: item.id,
+                poster_path: item.poster_path,
+                media_type: 'tv',
+            }));
+
+        return res.json(topRatedShows);
+    } catch (error) {
+        console.error('Error fetching top-rated TV shows:', error);
+        return res.status(500).json({ message: 'Error fetching top-rated TV shows' });
+    }
+};
