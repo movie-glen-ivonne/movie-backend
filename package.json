@@ -19,7 +19,7 @@
     "express": "^4.21.1",
     "jsonwebtoken": "^9.0.2",
     "multer": "^1.4.5-lts.1",
-    "openai": "^4.73.1",
+    "openai": "^4.74.0",
     "pg": "^8.13.1",
     "reflect-metadata": "^0.2.2",
     "ts-node": "^10.9.2",
