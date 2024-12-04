@@ -82,8 +82,7 @@ export const updateUser = async (req: Request, res: Response): Promise<any> => {
 export const deleteUser = async (req: Request, res: Response): Promise<any> => {
   const { id } = await req.params;
   const userId = (req as Request & { user: any }).user.id;
-  console.log(id);
-  console.log(userId);
+
   try {
 
     if (userId == id) {
@@ -97,6 +96,28 @@ export const deleteUser = async (req: Request, res: Response): Promise<any> => {
     return res.status(200).json(`User deleted`);
   } catch (err) {
     console.log(err);
+    return res.status(500).json({ error: `Internal server error 🔴` });
+  }
+};
+
+export const searchUser = async (req: Request, res: Response): Promise<any> => {
+  const { search } = req.query;
+
+  try {
+    const users = await userRepository
+      .createQueryBuilder("user")
+      .leftJoinAndSelect("user.libraries", "libraries")
+      .where("user.email LIKE :search", { search: `%${search}%` })
+      .orWhere("user.name LIKE :search", { search: `%${search}%` })
+      .getMany();
+
+    if (users.length < 1) {
+      return res.json({ message: "No users found" });
+    }
+
+    return res.status(200).json(users);
+  } catch (err) {
+    console.error(err);
     return res.status(500).json({ error: `Internal server error 🔴` });
   }
 };

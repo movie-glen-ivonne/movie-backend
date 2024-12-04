@@ -9,7 +9,7 @@
 	"skipLibCheck": true,
 	"outDir": "./dist"
 	},
-	"include": ["*.ts", "entities/*.ts", "migrations/*.ts"],
+	"include": ["*.ts", "entities/*.ts", "migrations/*.ts", "socket.d.ts"],
 	"exclude": ["node_modules"]
   }
   

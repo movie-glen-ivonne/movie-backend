@@ -21,6 +21,8 @@ export const registerUser = async (req: Request, res: Response): Promise<any> =>
   console.log(req.file?.filename)
   if (req.file?.filename !== undefined) {
     newUser.photo = image
+  } else {
+    newUser.photo = 'https://i.pravatar.cc/300'
   }
   if (isAdmin) {
     newUser.isAdmin = isAdmin

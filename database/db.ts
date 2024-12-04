@@ -3,6 +3,10 @@ import { DataSource } from 'typeorm';
 import {User} from '../entities/User'
 import { Movie } from "../entities/Movie";
 import { Library } from "../entities/Library";
+import { ChatUser } from "../entities/Chat";
+import { Message } from "../entities/Message";
+import { Room } from "../entities/Room";
+import { UserRoom } from "../entities/UserRoom";
 import { LibraryMovie } from "../entities/LibraryMovie";
 import 'dotenv/config'
 
@@ -15,6 +19,6 @@ export const AppDataSource = new DataSource({
   database: process.env.DB_DATABASE,
   synchronize: true,
   logging: true,
-  entities: [User, Library, Movie, LibraryMovie],
+  entities: [User, Library, Movie, LibraryMovie, ChatUser, Message, Room, UserRoom],
   migrations: ['migrations/*.ts'],
 });
