@@ -36,17 +36,14 @@ app.use(express.urlencoded({ extended: true }));
 // CORS configuration
 app.use(
   cors({
-    origin: 'http://localhost:3000',
+    origin: [
+      'http://localhost:3000', 
+      'https://movie-project-fe-630243095989.us-central1.run.app/'
+    ],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
-  }),
-  cors({
-    origin: 'https://movie-project-fe-630243095989.us-central1.run.app/',
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    credentials: true,
-  }),
+  })
 );
-
 // Handle WebSocket connections
 handleSocketConnection(io);
 
