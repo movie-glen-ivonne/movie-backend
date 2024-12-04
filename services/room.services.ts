@@ -3,6 +3,7 @@ import { Room } from '../entities/Room';
 import { UserRoom } from '../entities/UserRoom';
 import { In } from 'typeorm';
 import { Message } from '../entities/Message';
+import { User } from '../entities/User';
 import * as userService from './user.services';
 
 interface RoomWithLatestMessage extends Room {
@@ -14,14 +15,15 @@ export const createRoom = async (email: string, userId: number, self_email: stri
   const userRoomRepository = AppDataSource.getRepository(UserRoom);
 
 
-  const getUserName = async () => {
-    const user = await userService.getUserById(String(userId));
+  const getUserName = async (id : string) => {
+    const user = await userService.getUserById(id);
     return user ? user.name : "";
   };
 
   let room = new Room();
-  room.name = await getUserName();
-  console.log(room.name);
+  // const self_username = await getUserName(String(self_id));
+  // const username = await getUserName(String(userId));
+  room.name = `${self_email}-${email}`;
   room.participants = [self_email, email];
 
   room = await roomRepository.save(room);
@@ -41,10 +43,20 @@ export const createRoom = async (email: string, userId: number, self_email: stri
 
 export const getAllRooms = async (userId: number) => {
   const userRoomRepository = AppDataSource.getRepository(UserRoom);
+  const userRepository = AppDataSource.getRepository(User);
   const roomRepository = AppDataSource.getRepository(Room);
   const messageRepository = AppDataSource.getRepository(Message);
 
-  // Get the user's rooms
+  const currentUser = await userRepository.findOne({
+    where: { id: userId },
+  });
+  
+  if (!currentUser) {
+    throw new Error('User not found');
+  }
+  
+  const currentUserEmail = currentUser.email;
+
   const userRooms = await userRoomRepository.find({
     where: { userId },
     order: { id: "DESC" },
@@ -59,6 +71,23 @@ export const getAllRooms = async (userId: number) => {
     id: In(roomIds),
   });
 
+  const updatedRooms = rooms.map(room => {
+    const otherParticipantEmail = room.participants.find(email => email !== currentUserEmail);
+    
+    if (!otherParticipantEmail) {
+      return room;
+    }
+    
+    const otherParticipantUsername = otherParticipantEmail.split('@')[0];
+    
+    return {
+      ...room,
+      name: otherParticipantUsername,
+    };
+  });
+
+  console.log(updatedRooms);
+
   const latestMessages = await messageRepository.createQueryBuilder('message')
     .where('message.roomId IN (:...roomIds)', { roomIds })
     .orderBy('message.createdAt', 'DESC')
@@ -71,7 +100,7 @@ export const getAllRooms = async (userId: number) => {
     return map;
   }, {} as Record<string, Message>);
 
-  const roomsWithMessages = rooms.map((room: Room) => {
+  const roomsWithMessages = updatedRooms.map((room: Room) => {
     const roomWithLatestMessage: RoomWithLatestMessage = room;
     roomWithLatestMessage.latestMessage = roomMessagesMap[room.id];
     return roomWithLatestMessage;
