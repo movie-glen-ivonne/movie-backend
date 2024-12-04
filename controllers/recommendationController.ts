@@ -55,8 +55,8 @@ const getLibraryInfo = async (idLibrary: number): Promise<string[]> => {
 };
 
 const getMovieInfo = async (movie: string): Promise<any | null> => {
-    const response = await axios.get(API_MOVIE_URL + `/search/multi?append_to_response=videos`, {
-        params: { query: movie },
+    const response = await axios.get(API_MOVIE_URL + `/search/multi`, {
+        params: { query: movie, append_to_response: "videos" },
         headers: { Authorization: `Bearer ${API_MOVIE_KEY}` },
     });
 
@@ -66,14 +66,12 @@ const getMovieInfo = async (movie: string): Promise<any | null> => {
 
     if (!filteredMovie) return null;
 
+    console.log(filteredMovie);
     const movieInstance = {
         id: filteredMovie.id,
         poster_path: filteredMovie.poster_path,
-        first_air_date: filteredMovie.media_type === 'movie' ? filteredMovie.release_date : filteredMovie.first_air_date,
-        original_name: filteredMovie.media_type === 'movie' ? filteredMovie.original_title : filteredMovie.original_name,
-        overview: filteredMovie.overview,
-        vote_average: filteredMovie.vote_average,
-        video_url: await getVideo(filteredMovie.id, filteredMovie.media_type),
+        media_type: filteredMovie.media_type,
+       
         saved: false,
     };
 
