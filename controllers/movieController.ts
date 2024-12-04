@@ -229,16 +229,11 @@ const fetchAndCache = async (key: string, fetchData: () => Promise<any>) => {
 export const getTrendingMovies = async (req: Request, res: Response): Promise<Response | any> => {
     try {
         const data = await fetchAndCache('trending_movies', async () => {
-            const response = await fetch(`${API_MOVIE_URL}/trending/movie/week?language=en-US`, {
-                headers: { 'Authorization': `Bearer ${process.env.API_MOVIE_KEY}` },
+            const response = await axios.get(`${API_MOVIE_URL}/trending/movie/week`, {
+                headers: { 'Authorization': `Bearer ${process.env.API_MOVIE_KEY}` }
             });
 
-            if (!response.ok) {
-                throw new Error('Error fetching trending movies');
-            }
-
-            const result = await response.json();
-            return result.results
+            return response.data.results
                 .filter((item: { poster_path: string | null }) => item.poster_path !== null)
                 .map((item: { id: number, poster_path: string }) => ({
                     id: item.id,
