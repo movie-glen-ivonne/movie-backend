@@ -23,7 +23,10 @@ const port = process.env.PORT || 3001;
 const httpServer = createServer(app);
 const io = new SocketIOServer(httpServer, {
   cors: {
-    origin: 'http://localhost:3000',
+    origin: [
+      'http://localhost:3000', 
+      'https://movie-project-fe-630243095989.us-central1.run.app'
+    ],
     methods: ['GET', 'POST'],
     credentials: true,
   },
