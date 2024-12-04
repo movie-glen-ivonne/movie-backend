@@ -1,8 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
 
-@Entity() // Specifies the table name in PostgreSQL
+@Entity()
 export class Message {
-  @PrimaryGeneratedColumn() // Auto-increment primary key
+  @PrimaryGeneratedColumn()
   id!: number;
 
   @Column({ type: 'varchar', length: 255 })
@@ -17,6 +17,6 @@ export class Message {
   @Column({ type: 'text' })
   text!: string;
 
-  @CreateDateColumn() // Automatically sets the creation date
+  @CreateDateColumn()
   createdAt!: Date;
 }

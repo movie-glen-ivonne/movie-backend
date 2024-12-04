@@ -6,22 +6,19 @@ import { User } from "../entities/User";
 import { Repository } from "typeorm";
 import { AppDataSource } from "../database/db";
 
-// Join chat function
+
 export const joinChat = async (req: Request, res: Response): Promise<void> => {
   try {
     const { name, socketId, roomId } = req.body;
 
-    // Validate input
     if (!name || !socketId || !roomId) {
       res.status(400).json({ message: 'Name, socketId, and roomId are required' });
       return;
     }
 
-    // Create or update user in the database
     const user = await userService.createOrUpdateUser(name, socketId);
 
-    // Add user to the room
-    await roomService.addUserToRoom(roomId, String(user.id)); // Assuming user.id is the primary key
+    await roomService.addUserToRoom(roomId, String(user.id));
     res.status(201).json({ message: 'User joined', user });
   } catch (error) {
     console.error('Error in joinChat:', error);
@@ -29,18 +26,15 @@ export const joinChat = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-// Send message function
 export const sendMessage = async (req: Request, res: Response): Promise<void> => {
   try {
     const { senderId, roomId, username, text } = req.body;
 
-    // Validate input
     if (!senderId || !roomId || !username || !text) {
       res.status(400).json({ message: 'All fields are required' });
       return;
     }
 
-    // Create and save message
     const message = await messageService.createMessage(
       roomId,
       senderId,
@@ -54,7 +48,6 @@ export const sendMessage = async (req: Request, res: Response): Promise<void> =>
   }
 };
 
-// Get messages in a room
 export const getRoomMessages = async (req: Request, res: Response): Promise<void> => {
   try {
     const { roomId } = req.params;
@@ -68,11 +61,9 @@ export const getRoomMessages = async (req: Request, res: Response): Promise<void
   }
 };
 
-// Get all rooms
 export const getRooms = async (req: Request, res: Response): Promise<void> => {
 
   const userId = (req as Request & { user: any }).user.id;
-  // get only your rooms
   try {
     if (userId) {
 
@@ -86,7 +77,6 @@ export const getRooms = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-// Create room function
 export const createRoom = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, userId } = req.body;

@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
 
-@Entity()  // Specifies the table name in PostgreSQL
+@Entity()
 export class ChatUser {
   @PrimaryGeneratedColumn()
   id!: number;

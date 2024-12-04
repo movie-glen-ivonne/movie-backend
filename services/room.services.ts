@@ -21,8 +21,7 @@ export const createRoom = async (email: string, userId: number, self_email: stri
   };
 
   let room = new Room();
-  // const self_username = await getUserName(String(self_id));
-  // const username = await getUserName(String(userId));
+
   room.name = `${self_email}-${email}`;
   room.participants = [self_email, email];
 

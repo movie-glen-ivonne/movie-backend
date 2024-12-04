@@ -6,8 +6,8 @@ export class UserRoom {
   id!: number;
 
   @Column()
-  userId!: number; // Holds the ID of the user
+  userId!: number;
 
   @Column()
-  roomId!: number; // Holds the ID of the room
+  roomId!: number;
 }

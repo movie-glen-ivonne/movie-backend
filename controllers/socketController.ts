@@ -29,16 +29,14 @@ export const handleSocketConnection = (io: Server) => {
 
     const userId = socket.data.userId;
 
-    // Get the user name from the database using the userId
     const getUserName = async () => {
       const user = await userService.getUserById(userId);
       return user ? user.name : null;
     };
 
     
-    // When a user joins a room
     socket.on('join', async ({ roomId }) => {
-      const name = await getUserName(); // Get the user's name from DB
+      const name = await getUserName();
 
       if (!name) {
         console.log(`User with ID ${userId} not found.`);
@@ -50,9 +48,8 @@ export const handleSocketConnection = (io: Server) => {
       console.log(`${name} joined room: ${roomId}`);
     });
 
-    // When a message is sent in a room
     socket.on('message', async ({ roomId, senderId, text }) => {
-      const username = await getUserName(); // Get the user's name from DB
+      const username = await getUserName();
 
       if (!username) {
         console.log(`User with ID ${userId} not found.`);

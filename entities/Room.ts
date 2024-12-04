@@ -1,13 +1,13 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
-@Entity('rooms') // Specifies the table name in PostgreSQL
+@Entity('rooms')
 export class Room {
-  @PrimaryGeneratedColumn() // Auto-increment primary key
+  @PrimaryGeneratedColumn()
   id!: number;
 
   @Column({ type: 'varchar', length: 255, unique: true })
   name!: string;
 
-  @Column('simple-array') // This stores the participants as an array of strings
+  @Column('simple-array')
   participants!: string[];
 }

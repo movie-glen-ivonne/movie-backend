@@ -1,35 +1,37 @@
 import { Request, Response } from 'express';
 import { AppDataSource } from '../database/db';
 import { Library } from '../entities/Library';
+import { User } from '../entities/User';
+import { Raw } from 'typeorm';
+import { MoreThan } from 'typeorm';
 
 const libraryRepository = AppDataSource.getRepository(Library);
 
 export const createLibrary = async (req: Request, res: Response): Promise<Response | any> => {
     const { name } = req.body;
     const userId = (req as Request & { user: any }).user.id;
-
     try {
-        // Check if a library with the same name exists for the user
+     
+        const user = await AppDataSource.getRepository(User).findOneBy({ id: userId });        
         const existingLibrary = await AppDataSource.getRepository(Library).findOne({
             where: {
-                user: userId,
-                name: name.toLowerCase(), // Case-insensitive check
+                name: Raw((alias) => `LOWER(${alias}) = LOWER(:name)`, { name: name }),
+                user: user,
             },
+            relations: ["user"],
         });
 
         if (existingLibrary) {
-            return res.status(409).json({ message: "Library already exists." });
+          return res.status(409).json({ message: "Library already exists." });
         }
-
-        // Create a new library
+        
         const library = new Library();
         library.name = name;
         library.creationDate = new Date();
-        library.user = userId;
-
+        library.user = user;
+        
         const savedLibrary = await AppDataSource.getRepository(Library).save(library);
-
-        return res.status(201).json({ message: "Library created successfully", library: savedLibrary });
+        return res.status(201).json(savedLibrary);
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: "Failed to create library" });
@@ -40,17 +42,15 @@ export const getLibraries = async (req: Request, res: Response): Promise<Respons
     try {
         const userId = (req as Request & { user: any }).user.id;
 
-        // Fetch all libraries and their movies in one query
         const libraries = await libraryRepository.find({
             where: { user: { id: userId } },
-            relations: ['movies', 'movies.movie'], // Eager load movies and movie data
+            relations: ['movies', 'movies.movie'], 
         });
 
         if (libraries.length < 1) {
             return res.status(204).json({ message: 'No libraries found' });
         }
 
-        // Map the data into the required format
         const librariesInfo = libraries.map((library) => ({
             id: library.id,
             name: library.name,
