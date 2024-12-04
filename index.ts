@@ -15,11 +15,9 @@ import { Server as SocketIOServer } from 'socket.io';
 import chatRoutes from './routes/chatRouter';
 import { handleSocketConnection } from './controllers/socketController';
 
-// Create the Express app
 const app: Application = express();
 const port = process.env.PORT || 3001;
 
-// Create the HTTP server for Socket.IO
 const httpServer = createServer(app);
 const io = new SocketIOServer(httpServer, {
   cors: {
@@ -32,11 +30,9 @@ const io = new SocketIOServer(httpServer, {
   },
 });
 
-// Middleware for parsing JSON requests
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// CORS configuration
 app.use(
   cors({
     origin: [
@@ -47,19 +43,15 @@ app.use(
     credentials: true,
   })
 );
-// Handle WebSocket connections
 handleSocketConnection(io);
 
-// Initialize the database connection
 AppDataSource.initialize()
   .then(() => {
     console.log('Database connected successfully');
 
-    // Use routes only after the database connection is established
     app.use('/api', authRouter, userRouter, searchRouter, movieRouter, libraryRouter, libraryMovieRouter, recommendationRouter);
     app.use('/api/chat', chatRoutes);
 
-    // Start the server after all routes are set up
     httpServer.listen(port, () => {
       console.log(`Server running on port ${port} 🟢`);
     });
@@ -68,7 +60,6 @@ AppDataSource.initialize()
     console.error('Error connecting to the database:', error);
   });
 
-// Global error handling middleware
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   console.error('Error occurred:', err.stack);
   res.status(500).send('Something broke!');
