@@ -12,6 +12,15 @@ export const createLibrary = async (req: Request, res: Response): Promise<Respon
     const userId = (req as Request & { user: any }).user.id;
     try {
      
+        if (!name || name.trim() === "") {
+            return res.status(400).json({ message: "Library name is required." });
+        }
+    
+        const regex = /^[a-zA-Z0-9\s]+$/;
+        if (!regex.test(name)) {
+            return res.status(400).json({ message: "Library name can only contain alphanumeric characters and spaces." });
+        }
+
         const user = await AppDataSource.getRepository(User).findOneBy({ id: userId });        
         const existingLibrary = await AppDataSource.getRepository(Library).findOne({
             where: {
@@ -92,6 +101,15 @@ export const updateLibrary = async (req: Request, res: Response): Promise<Respon
     const { name } = req.body;
 
     try {
+
+        if (!name || name.trim() === "") {
+            return res.status(400).json({ message: "Library name is required." });
+        }
+    
+        const regex = /^[a-zA-Z0-9\s]+$/;
+        if (!regex.test(name)) {
+            return res.status(400).json({ message: "Library name can only contain alphanumeric characters and spaces." });
+        }
 
         const library = await libraryRepository.findOneBy({ id: Number(id), user: userId });
 
