@@ -35,6 +35,7 @@
  *                 id:
  *                   type: integer
  *                   description: The ID of the movie or show.
+<<<<<<< HEAD
  *                   example: 1241982
  *                 poster_path:
  *                   type: string
@@ -53,10 +54,26 @@
  *                   type: string
  *                   description: A brief description of the movie or show.
  *                   example: "After receiving an unexpected call from her wayfinding ancestors, Moana journeys alongside Maui and a new crew to the far seas of Oceania and into dangerous, long-lost waters for an adventure unlike anything she's ever faced."
+=======
+ *                   example: 12345
+ *                 poster_path:
+ *                   type: string
+ *                   description: URL to the poster image of the movie or show.
+ *                   example: "/path/to/poster.jpg"
+ *                 original_name:
+ *                   type: string
+ *                   description: The original title of the movie or show.
+ *                   example: "Inception"
+ *                 overview:
+ *                   type: string
+ *                   description: A brief description of the movie or show.
+ *                   example: "A mind-bending thriller about dream manipulation."
+>>>>>>> 74f395f7686cf5571b81c6fc940abc893b0b92c1
  *                 vote_average:
  *                   type: number
  *                   format: float
  *                   description: The average rating of the movie or show.
+<<<<<<< HEAD
  *                   example: 6.9
  *                 media_type:
  *                   type: string
@@ -66,6 +83,13 @@
  *                   type: string
  *                   description: The URL of the movie's or show's video (YouTube link if available).
  *                   example: "https://www.youtube.com/watch?v=onzzmEg5o2I"
+=======
+ *                   example: 8.8
+ *                 video_url:
+ *                   type: string
+ *                   description: The URL of the movie's or show's video (YouTube link if available).
+ *                   example: "https://www.youtube.com/watch?v=xyz123"
+>>>>>>> 74f395f7686cf5571b81c6fc940abc893b0b92c1
  *                 saved:
  *                   type: boolean
  *                   description: Whether the movie or show is saved in the user's library.

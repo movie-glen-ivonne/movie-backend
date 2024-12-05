@@ -23,6 +23,7 @@
  *                   properties:
  *                     id:
  *                       type: integer
+<<<<<<< HEAD
  *                       example: 9
  *                     email:
  *                       type: string
@@ -42,6 +43,18 @@
  *                       type: boolean
  *                       description: Indicates whether the user has admin privileges.
  *                       example: false
+=======
+ *                       example: 1
+ *                     name:
+ *                       type: string
+ *                       example: "John Doe"
+ *                     email:
+ *                       type: string
+ *                       example: "johndoe@example.com"
+ *                     photo:
+ *                       type: string
+ *                       example: "/public/images/johndoe.jpg"
+>>>>>>> 74f395f7686cf5571b81c6fc940abc893b0b92c1
  *       500:
  *         description: Internal server error.
  *         content:
@@ -144,6 +157,7 @@
  *                   photo:
  *                     type: string
  *                     example: "/public/images/johndoe.jpg"
+<<<<<<< HEAD
 *       403:
  *         description: Forbidden access if the user is not an admin.
  *         content:
@@ -154,6 +168,8 @@
  *                 message:
  *                   type: string
  *                   example: "Function not available for your profile"
+=======
+>>>>>>> 74f395f7686cf5571b81c6fc940abc893b0b92c1
  *       500:
  *         description: Internal server error.
  *         content:

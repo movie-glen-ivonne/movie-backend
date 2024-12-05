@@ -82,12 +82,20 @@ export const getLibraryById = async (req: Request, res: Response): Promise<Respo
             return res.status(400).json({ error: "Missing or invalid 'id' parameter" });
         }
 
-        const orderByID = await libraryRepository.find({where : {id: parseInt(id)}})
-        if (orderByID.length < 1) {
+
+        const findById = await libraryRepository.findOneBy({id: parseInt(id)})
+        if (!findById) {
             return res.status(204).json({ message: 'No libraries found' })
         }
 
-        return res.status(200).json(await getLibraryInfo(orderByID[0].id))
+        const librariesInfo = ({
+            id: findById.id,
+            name: findById.name,
+            movies: findById.movies || [],
+        });
+
+
+        return res.status(200).json(librariesInfo)
     }
     catch (err) {
         console.log(err)
