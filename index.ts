@@ -10,7 +10,7 @@ import recommendationRouter from './routes/recommendationRouter';
 import cors from 'cors';
 import 'dotenv/config';
 import 'reflect-metadata';
-import { createServer } from 'https';
+import { createServer } from 'http';
 import { Server as SocketIOServer } from 'socket.io';
 import chatRoutes from './routes/chatRouter';
 import { handleSocketConnection } from './controllers/socketController';
