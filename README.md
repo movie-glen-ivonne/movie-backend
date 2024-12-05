@@ -167,6 +167,7 @@ To start the application locally, run:
     ```bash
     npm start
     ```
+
 5. API Documentation and Test endpoints
 
 For detailed information about the API endpoints and/or testing, you can check out the Swagger API Documentation (once the application is running locally), in the route /api-docs
