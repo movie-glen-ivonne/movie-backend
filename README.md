@@ -81,13 +81,12 @@ Follow these steps to get the application up and running locally.
    git clone https://github.com/movie-glen-ivonne/movie-backend.git
    cd movie-library-api
 
-2. Install the Required Dependencies
+1. Install the Required Dependencies:
 
-Run the following command to install the necessary dependencies:
+    Run the following command to install the necessary dependencies:    
 
-    ```bash
+   ```bash
     npm install
-    ```
 
 3. Create a .env file in the root directory of the project and add the following environment variables (check the .env.example in the repo): 
 
@@ -162,11 +161,10 @@ Run the following command to install the necessary dependencies:
 
 4. Running the Application
 
-To start the application locally, run:
+    To start the application locally, run:
 
     ```bash
     npm start
-    ```
 
 5. API Documentation and Test endpoints
 
