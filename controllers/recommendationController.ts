@@ -67,15 +67,19 @@ const getMovieInfo = async (movie: string): Promise<any | null> => {
     if (!filteredMovie) return null;
 
     console.log(filteredMovie);
-    const movieInstance = {
-        id: filteredMovie.id,
-        poster_path: filteredMovie.poster_path,
-        media_type: filteredMovie.media_type,
-       
-        saved: false,
-    };
 
-    return movieInstance;
+    if(filteredMovie.poster_path) {
+
+        const movieInstance = {
+            id: filteredMovie.id,
+            poster_path: filteredMovie.poster_path,
+            media_type: filteredMovie.media_type,
+           
+            saved: false,
+        };
+        return movieInstance;
+    }
+
 };
 
 const getVideo = async (movieId: number, type: string): Promise<string> => {
