@@ -23,6 +23,27 @@
  *                   properties:
  *                     id:
  *                       type: integer
+<<<<<<< HEAD
+ *                       example: 9
+ *                     email:
+ *                       type: string
+ *                       example: "john.doe2@example.com"
+ *                     name:
+ *                       type: string
+ *                       example: "John Doe"
+ *                     password:
+ *                       type: string
+ *                       description: The hashed password of the user (usually not returned in practice).
+ *                       example: "$2a$10$sIy3PVxbyOuzfpL8O4R8luCWCghSNBWmhC2dAW4j8X9eBE8xNg7EG"
+ *                     photo:
+ *                       type: string
+ *                       description: The URL of the user's profile photo.
+ *                       example: "https://i.pravatar.cc/300"
+ *                     isAdmin:
+ *                       type: boolean
+ *                       description: Indicates whether the user has admin privileges.
+ *                       example: false
+=======
  *                       example: 1
  *                     name:
  *                       type: string
@@ -33,6 +54,7 @@
  *                     photo:
  *                       type: string
  *                       example: "/public/images/johndoe.jpg"
+>>>>>>> 74f395f7686cf5571b81c6fc940abc893b0b92c1
  *       500:
  *         description: Internal server error.
  *         content:
@@ -135,6 +157,19 @@
  *                   photo:
  *                     type: string
  *                     example: "/public/images/johndoe.jpg"
+<<<<<<< HEAD
+*       403:
+ *         description: Forbidden access if the user is not an admin.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Function not available for your profile"
+=======
+>>>>>>> 74f395f7686cf5571b81c6fc940abc893b0b92c1
  *       500:
  *         description: Internal server error.
  *         content:
