@@ -83,15 +83,24 @@ export const getLibraryById = async (req: Request, res: Response): Promise<Respo
         }
 
 
-        const findById = await libraryRepository.findOneBy({id: parseInt(id)})
-        if (!findById) {
+        // const findById = await libraryRepository.findOne(
+        //     where: {id: parseInt(id)},
+        //     relations: ['movies', 'movies.movie'], 
+        // )
+
+        const libraryByID = await libraryRepository.findOne({
+            where: { id: parseInt(id) },
+            relations: ['movies', 'movies.movie'],
+        });
+        console.log(libraryByID);
+        if (!libraryByID) {
             return res.status(204).json({ message: 'No libraries found' })
         }
 
         const librariesInfo = ({
-            id: findById.id,
-            name: findById.name,
-            movies: findById.movies || [],
+            id: libraryByID.id,
+            name: libraryByID.name,
+            movies: libraryByID.movies || [],
         });
 
 
