@@ -89,11 +89,7 @@ Run the following command to install the necessary dependencies:
     npm install
     ```
 
-<<<<<<< HEAD
-3. Create a .env file in the root directory of the project and add the following environment variables:
-=======
-3. Create a .env file in the root directory of the project and add the following environment variables (check the .env.example in the repo):
->>>>>>> 0ce93e388e1b0f5ced3c2cc51cf4122fe454c556
+3. Create a .env file in the root directory of the project and add the following environment variables (check the .env.example in the repo): 
 
 ## Variables
 
@@ -176,12 +172,10 @@ To start the application locally, run:
 
 For detailed information about the API endpoints and/or testing, you can check out the Swagger API Documentation (once the application is running locally), in the route /api-docs
 
-<<<<<<< HEAD
-=======
 6. Deployment Links
 
 The APi currently is deployed in https://movie-project-bk-630243095989.us-central1.run.app
->>>>>>> 0ce93e388e1b0f5ced3c2cc51cf4122fe454c556
+
 
 
 
