@@ -1,27 +1,19 @@
 /**
  * @swagger
- * /api/search/:
+ * /api/search:
  *   get:
- *     summary: Get movie or TV show details by ID
- *     description: Fetches movie or TV show details by ID, including metadata like poster, release date, overview, vote average, and a video link if available.
+ *     summary: Search for movies or shows
+ *     description: Retrieves a list of movies or shows based on a search query, with caching to improve performance.
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - name: id
+ *       - name: query
  *         in: query
  *         required: true
- *         description: The ID of the movie or TV show to search for.
+ *         description: The search query for the movies or shows (e.g., title, actor, genre).
  *         schema:
  *           type: string
- *           example: "12345"
- *       - name: type
- *         in: query
- *         required: true
- *         description: The type of media to search for (movie or tv).
- *         schema:
- *           type: string
- *           enum: [movie, tv]
- *           example: "movie"
+ *           example: "Inception"
  *     responses:
  *       200:
  *         description: Successfully fetched movie or TV show details.
