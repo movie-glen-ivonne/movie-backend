@@ -118,7 +118,7 @@ export const searchUser = async (req: Request, res: Response): Promise<any> => {
 
     if (users.length < 1) {
       return res.json({ message: "No users found" });
-    }
+    } 
 
     return res.status(200).json(users);
   } catch (err) {
