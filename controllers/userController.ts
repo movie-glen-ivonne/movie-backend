@@ -53,14 +53,14 @@ export const updateUser = async (req: Request, res: Response): Promise<any> => {
       return res.json({ message: `No user found` });
     }
 
-    const result = await AppDataSource.getRepository(User).findOneBy({email : email})
-    if (result) {
-      return res.status(404).json({message: "Email already used"})
-    }
+    // const result = await AppDataSource.getRepository(User).findOneBy({email : email})
+    // if (result) {
+    //   return res.status(404).json({message: "Email already used"})
+    // }
 
     userByID.name = name ?? userByID.name;
-    userByID.email = email ?? userByID.email;
-    userByID.email = email ?? userByID.email;
+    // userByID.email = email ?? userByID.email;
+    // userByID.email = email ?? userByID.email;
     if (req.file?.filename !== undefined) {
       userByID.photo = image
     }

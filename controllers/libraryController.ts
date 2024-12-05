@@ -81,13 +81,7 @@ export const getLibraryById = async (req: Request, res: Response): Promise<Respo
         if (!id || isNaN(Number(id)) || typeof(id) == undefined) {
             return res.status(400).json({ error: "Missing or invalid 'id' parameter" });
         }
-
-
-        // const findById = await libraryRepository.findOne(
-        //     where: {id: parseInt(id)},
-        //     relations: ['movies', 'movies.movie'], 
-        // )
-
+        
         const libraryByID = await libraryRepository.findOne({
             where: { id: parseInt(id) },
             relations: ['movies', 'movies.movie'],
