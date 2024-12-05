@@ -7,6 +7,8 @@ import movieRouter from './routes/movieRouter';
 import libraryRouter from './routes/libraryRouter';
 import libraryMovieRouter from './routes/libraryMovieRouter';
 import recommendationRouter from './routes/recommendationRouter';
+import swaggerDocs from "./swaggerDoc";
+import swaggerUi from 'swagger-ui-express';
 import cors from 'cors';
 import 'dotenv/config';
 import 'reflect-metadata';
@@ -32,6 +34,7 @@ const io = new SocketIOServer(httpServer, {
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 app.use(
   cors({
