@@ -1,5 +1,5 @@
 import {Request, Response, NextFunction} from 'express'
-import jwt from 'jsonwebtoken'
+import jwt, { TokenExpiredError } from 'jsonwebtoken'
 
 
 export const authenticateJWT = async (req: Request, res: Response, next: NextFunction): Promise<Response | any> => {
@@ -20,6 +20,10 @@ export const authenticateJWT = async (req: Request, res: Response, next: NextFun
         (req as Request & {user: any}).user = decoded
         next();
     } catch (err) {
+        if (err instanceof TokenExpiredError) {
+            return res.status(400).json({message: "Session expired, login again"})
+        }
+        console.log(err)
         return res.status(500).json({message: "Internal server error!"})
     }
 }

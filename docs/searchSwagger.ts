@@ -25,41 +25,20 @@
  *                 id:
  *                   type: integer
  *                   description: The ID of the movie or TV show.
- *                   example: 12345
+ *                   example: 27205
  *                 poster_path:
  *                   type: string
  *                   description: URL to the poster image.
- *                   example: "/path/to/poster.jpg"
- *                 first_air_date:
- *                   type: string
- *                   format: date
- *                   description: The release or air date of the movie/show.
- *                   example: "2020-12-15"
- *                 original_name:
- *                   type: string
- *                   description: The original title or name of the movie/show.
- *                   example: "Movie Title"
- *                 overview:
- *                   type: string
- *                   description: A short description of the movie/show.
- *                   example: "This is an exciting action movie."
- *                 vote_average:
- *                   type: number
- *                   format: float
- *                   description: The average vote rating for the movie/show.
- *                   example: 7.8
+ *                   example: "/oYuLEt3zVCKq57qu2F8dT7NIa6f.jpg"
  *                 media_type:
  *                   type: string
  *                   description: The type of media (movie or tv).
  *                   example: "movie"
- *                 video_url:
- *                   type: string
- *                   description: A URL to a video preview or trailer (if available).
- *                   example: "https://www.youtube.com/watch?v=abcdef"
- *                 saved:
- *                   type: boolean
- *                   description: Whether the movie/show is saved in the user's library.
- *                   example: false
+ *                 popularity:
+ *                   type: number
+ *                   format: float
+ *                   description: The popularity score of the movie/show.
+ *                   example: 100.225
  *       400:
  *         description: No matching results found for the given ID or query.
  *         content:
